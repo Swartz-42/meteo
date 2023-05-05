@@ -1,4 +1,4 @@
-class WeatherData {
+class WeatherHourlyData {
   final String currentTemp;
   final String weatherCode;
   final String windSpeed;
@@ -8,7 +8,7 @@ class WeatherData {
   final List<String> time;
   final List<String> temperature;
 
-  const WeatherData({
+  const WeatherHourlyData({
     required this.currentTemp,
     required this.weatherCode,
     required this.windSpeed,
@@ -23,42 +23,41 @@ class WeatherData {
 
   String _degreesToDirection(String direction) {
     double deg = double.parse(direction);
-    if (deg >= 0 && deg <= 11) {
-      return "N";
-    } else if (deg > 11 && deg <= 33) {
-      return "NNE";
-    } else if (deg > 33 && deg <= 56) {
-      return "NE";
-    } else if (deg > 56 && deg <= 78) {
-      return "ENE";
-    } else if (deg > 78 && deg <= 101) {
-      return "E";
-    } else if (deg > 101 && deg <= 123) {
-      return "ESE";
-    } else if (deg > 123 && deg <= 146) {
-      return "SE";
-    } else if (deg > 146 && deg <= 168) {
-      return "SSE";
-    } else if (deg > 168 && deg <= 191) {
-      return "S";
-    } else if (deg > 191 && deg <= 213) {
-      return "SSW";
-    } else if (deg > 213 && deg <= 236) {
-      return "SW";
-    } else if (deg > 236 && deg <= 258) {
-      return "WSW";
-    } else if (deg > 258 && deg <= 281) {
-      return "W";
-    } else if (deg > 281 && deg <= 303) {
-      return "WNW";
-    } else if (deg > 303 && deg <= 326) {
-      return "NW";
-    } else if (deg > 326 && deg <= 348) {
-      return "NNW";
-    } else if (deg > 348 && deg <= 360) {
-      return "N";
-    } else {
-      return "N";
-    }
+    int angle = ((deg / 22.5) + 0.5).floor();
+    List<String> directions = [
+      'N',
+      'NNE',
+      'NE',
+      'ENE',
+      'E',
+      'ESE',
+      'SE',
+      'SSE',
+      'S',
+      'SSW',
+      'SW',
+      'WSW',
+      'W',
+      'WNW',
+      'NW',
+      'NNW'
+    ];
+    return directions[angle % 16];
   }
+}
+
+class WeatherDailyData {
+  final String date;
+  final String weatherCode;
+  final double maxTemp;
+  final double minTemp;
+  final int precipitation;
+
+  const WeatherDailyData({
+    required this.date,
+    this.weatherCode = "-",
+    required this.maxTemp,
+    required this.minTemp,
+    required this.precipitation,
+  });
 }
