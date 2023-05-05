@@ -1,29 +1,49 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
+import 'package:flutter_mapbox_autocomplete/flutter_mapbox_autocomplete.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meteo/main.dart';
+import 'package:meteo/presentation/ui/viewmodels/testscreen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const App());
+  group('TestScreen', () {
+    testWidgets('should render the MapBoxAutoCompleteWidget', (tester) async {
+      await tester.pumpWidget(TestScreen());
+      expect(find.byType(MapBoxAutoCompleteWidget), findsOneWidget);
+    });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    testWidgets('should render the DropdownButtonFormField', (tester) async {
+      await tester.pumpWidget(TestScreen());
+      expect(find.byType(DropdownButtonFormField), findsOneWidget);
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    testWidgets(
+        'should show the weather data when the Get Weather button is pressed',
+        (tester) async {
+      await tester.pumpWidget(TestScreen());
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      print("Tap on the MapBoxAutoCompleteWidget");
+      await tester.tap(find.byType(MapBoxAutoCompleteWidget));
+      await tester.pumpAndSettle();
+
+      print("Enter a place name");
+      await tester.enterText(
+          find.byType(TextField), 'New York City, New York, United States');
+      await tester.pumpAndSettle();
+
+      print("Select a date");
+      await tester.tap(find.text('Date'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(
+          DateTime.now().add(Duration(days: 1)).toString().substring(0, 10)));
+      await tester.pumpAndSettle();
+
+      print("Tap on the Get Weather button");
+      await tester.tap(find.text('Get Weather'));
+      await tester.pumpAndSettle();
+
+      print("Verify that the weather data is displayed");
+      expect(find.textContaining('Température max:'), findsOneWidget);
+      expect(find.textContaining('Température min:'), findsOneWidget);
+      expect(find.textContaining('Precipitation:'), findsOneWidget);
+    });
   });
 }
